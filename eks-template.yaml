@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Este template crea un cluster de Amazon EKS
+
+Parameters:
+  ClusterName:
+    Type: String
+    Description: El nombre del cluster
+  NodeCount:
+    Type: Number
+    Default: 3
+    Description: El número de nodos en el cluster
+  VPCID:
+    Type: String
+    Description: El ID de la VPC donde se creará el cluster
+  Subnets:
+    Type: List<String>
+    Description: Las subredes de la VPC donde se crearán los nodos
+  EKSVersion:
+    Type: String
+    Description: La versión de Amazon EKS a usar
+
+Resources:
+  Cluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      ClusterName: !Ref ClusterName
+      Version: !Ref EKSVersion
+      NodeGroups:
+        - Name: Worker
+          NodeRole: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+          NodeCount: !Ref NodeCount
+          Subnets: !Ref Subnets
+          InstanceType: t2.micro
+
+Outputs:
+  ClusterName:
+    Value: !Ref Cluster

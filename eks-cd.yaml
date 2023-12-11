@@ -1,0 +1,23 @@
+trigger:
+- push
+
+variables:
+  Environments:
+    Dev: Dev
+    Qa: Qa
+    Prod: Prod
+
+stages:
+  - stage: Deploy
+    displayName: Deploy
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        steps:
+          - task: AWS::CodeDeploy@2
+            displayName: Deploy to AWS
+            inputs:
+              applicationName: MyApplication
+              deploymentGroupName: MyDeploymentGroup
+              revision: '{{branch}}'
+              targetEnvironment: '{{item}}'

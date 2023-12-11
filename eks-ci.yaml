@@ -1,0 +1,34 @@
+trigger:
+- push
+
+variables:
+  Environments:
+    Dev: Dev
+    Qa: Qa
+    Prod: Prod
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: Build
+        displayName: Build
+        steps:
+          - task: VSBuild@1
+            displayName: Build
+            inputs:
+              msbuildArguments: /t:Build /p:Configuration=Release
+
+  - stage: Deploy
+    displayName: Deploy
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        steps:
+          - task: AWS::CloudFormation@2
+            displayName: Deploy Cloudformation Stack
+            inputs:
+              templateFile: template-eks.yaml
+              parameters:
+                Environment: '{{item}}'
+            connection: MyAWSConnection
